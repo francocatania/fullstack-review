@@ -1,35 +1,37 @@
 const express = require('express');
 let app = express();
 const {save, Repo} = require('../database/index.js');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const {getReposByUsername} = require('../helpers/github.js');
+
 
 app.use(express.static(__dirname + '/../client/dist'));
+app.use(bodyParser.json())
+app.use(cors());
 
-var jsonParser = bodyParser.json();
-var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
-app.post('/repos', jsonParser, function (req, res) {
-
+app.post('/repos', function (req, res) {
   if (!req.body) return res.sendStatus(400);
   let textInput = req.body.username;
-  
-
-  // and get the repo information from the github API, then
-  getReposByUsername(textInput, () => { // MI CALLBACK VA A SAVEAR EN MONGO Y HACER EL RES.SEND DE ABAJO
-    // save the repo information in the database
-    res.send('Successfully Posted');
+  getReposByUsername(textInput, (repos) => {
+    JSON.parse(repos).forEach(repo => save(repo));
+    res.json('Successfully Posted');
   }); 
 
   
 });
 
-app.get('/repos', function (req, res) {
-  // TODO - your code here!
-  // This route should send back the top 25 repos
-  Repo.find((err, repos) => {
-    if (err) res.send(err);
-    res.send(repos.slice(0,25))
-  })
+app.get('/repos/:username', function (req, res) {
+  var username = req.params.username;
+  Repo.find().
+    where('owner').equals(username).
+    sort({stars: -1 }).
+    limit(25).
+    exec((err, repos) => {
+      if (err) res.send(err);
+      res.json(repos);
+    });
 });
 
 let port = 1128;
