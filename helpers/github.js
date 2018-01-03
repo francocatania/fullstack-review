@@ -2,7 +2,7 @@ const request = require('request');
 const config = require('../config.js');
 const GITHUB_URL = 'https://api.github.com'
 
-let getReposByUsername = (username) => {
+let getReposByUsername = (username, cb) => {
   // TODO - Use the request module to request repos for a specific
   // user from the github API
 
@@ -22,8 +22,9 @@ let getReposByUsername = (username) => {
     } else {
       console.log('github.js data: ', data);
       console.log('github.js data type: ', typeof data);
+      cb(data);
     }
-  }))
+  }));
 
 }
 
