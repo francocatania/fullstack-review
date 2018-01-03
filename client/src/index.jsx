@@ -10,12 +10,21 @@ class App extends React.Component {
     this.state = { 
       repos: []
     }
-
+    
   }
 
   search (term) {
     console.log(`${term} was searched`);
-    // TODO
+    let myPost = new Request('http://127.0.0.1:1128/repos', {method: 'POST', body: {username: term});
+    fetch(myPost)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }  
+      })
+      .then(json => {
+        this.setState({repos: json});
+      })
   }
 
   render () {
