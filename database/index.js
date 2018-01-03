@@ -29,12 +29,7 @@ let repoSchema = mongoose.Schema({
 
 let Repo = mongoose.model('Repo', repoSchema);
 
-let save = (json) => { //ON SERVER SIDE I HAVE TO MAKE SURE I AM PASSING A SINGLE REPO AS AN ARGUMENT, 
-                       //MAYBE USING FOREACH
-
-  // TODO: Your code here
-  // This function should save a repo or repos to
-  // the MongoDB
+let save = (json) => {
   let dbJson = {
     repo_id: json.id,
     repo_name: json.name,
